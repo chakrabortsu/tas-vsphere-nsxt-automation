@@ -1,0 +1,54 @@
+product-name: pas-windows
+product-properties:
+  .properties.app_log_rate_limiting:
+    selected_option: disable
+    value: disable
+  .properties.bosh_ssh_enabled:
+    value: true
+  .properties.kms:
+    selected_option: disable
+    value: disable
+  .properties.route_integrity:
+    selected_option: disable
+    value: disable
+  .properties.smoke_tests_windows:
+    selected_option: on_demand
+    value: on_demand
+  .properties.system_logging:
+    selected_option: disable
+    value: disable
+  .properties.winc_network_subnet_range:
+    value: 172.30.0.0/22
+  .properties.windows_admin_password:
+    selected_option: use_default
+    value: use_default
+  .properties.windows_authentication:
+    selected_option: disable
+    value: disable
+network-properties:
+  network:
+    name: deployment
+  other_availability_zones:
+  - name: az1
+  singleton_availability_zone:
+    name: az1
+resource-config:
+  windows_diego_cell:
+    max_in_flight: 4%
+    additional_networks: []
+    additional_vm_extensions: []
+    instance_type:
+      id: automatic
+    instances: automatic
+    nsxt:
+      lb:
+        server_pools: []
+      ns_groups: []
+      vif_type: null
+    swap_as_percent_of_memory_size: automatic
+errand-config:
+  install-hwc-buildpack:
+    post-deploy-state: true
+  smoke_tests_windows:
+    post-deploy-state: true
+

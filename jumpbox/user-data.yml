@@ -1,0 +1,57 @@
+#@ load("@ytt:data", "data")
+
+#@ DVs = data.values
+---
+password: #@ DVs.slot_password
+ssh_pwauth: true
+chpasswd:
+  expire: false
+groups:
+- docker
+users:
+- default
+- name: ubuntu
+  ssh-authorized-keys:
+  - #@ DVs.public_ssh_key
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  groups: sudo, docker
+  shell: /bin/bash
+growpart:
+  mode: auto
+  devices: ["/"]
+resize_rootfs: noblock
+ntp:
+  enabled: true
+  servers:
+  - time1.oc.vmware.com
+  - time2.oc.vmware.com
+  - time3.oc.vmware.com
+  - time4.oc.vmware.com
+write_files:
+  #fix syslog sda/sdb errors
+- path: /etc/multipath.conf
+  append: true
+  content: |
+    blacklist {
+      device {
+        vendor "VMware"
+        product "Virtual disk"
+      }
+    }
+- path: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+  permissions: '0644'
+  content: |
+    network: {config: disabled}
+runcmd:
+- echo -n > /etc/machine-id
+- systemctl restart multipathd
+#! remove floppy
+- rmmod floppy
+- echo "blacklist floppy" | sudo tee /etc/modprobe.d/blacklist-floppy.conf
+- dpkg-reconfigure initramfs-tools
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+- add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+- apt-get update -y
+- apt-get install -y docker-ce docker-ce-cli containerd.io unzip
+- systemctl start docker
+- systemctl enable docker

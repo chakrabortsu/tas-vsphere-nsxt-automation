@@ -1,0 +1,27 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:base64", "base64")
+---
+DiskProvisioning: thin
+IPAllocationPolicy: fixedPolicy
+IPProtocol: IPv4
+PropertyMapping:
+- Key: instance-id
+  Value: id-ovf
+- Key: hostname
+  Value: #@ data.values.name
+- Key: seedfrom
+  Value: ""
+- Key: public-keys
+  Value: ""
+- Key: user-data
+  Value: #@ base64.encode( '#cloud-config' + "\n" + data.values.user_data )
+- Key: password
+  Value: ""
+NetworkMapping:
+- Name: VM Network
+  Network: #@ data.values.network
+MarkAsTemplate: false
+PowerOn: false
+InjectOvfEnv: false
+WaitForIP: false
+Name: #@ data.values.name
