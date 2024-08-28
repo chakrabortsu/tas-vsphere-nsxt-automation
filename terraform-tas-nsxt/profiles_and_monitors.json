@@ -1,0 +1,62 @@
+{
+  "resource_type": "Infra",
+  "display_name": "infra",
+  "children": [{
+    "LBAppProfile" : {
+      "idle_timeout" : 1800,
+      "close_timeout" : 8,
+      "resource_type" : "LBFastTcpProfile",
+      "id" : "tas_lb_tcp_application_profile",
+      "display_name" : "tas_lb_tcp_application_profile"
+    },
+    "resource_type" : "ChildLBAppProfile",
+    "id" : "tas_lb_tcp_application_profile"
+  },{
+    "LBMonitorProfile" : {
+      "request_url" : "/health",
+      "request_method" : "GET",
+      "request_version" : "HTTP_VERSION_1_0",
+      "response_status_codes" : [ 200 ],
+      "resource_type" : "LBHttpMonitorProfile",
+      "id" : "tas-web-monitor",
+      "display_name" : "tas-web-monitor",
+      "monitor_port" : 8080,
+      "interval" : 5,
+      "timeout" : 5,
+      "rise_count" : 3,
+      "fall_count" : 3
+    },
+    "resource_type" : "ChildLBMonitorProfile",
+    "id" : "tas-web-monitor"
+  },{
+    "LBMonitorProfile" : {
+      "request_url" : "/health",
+      "request_method" : "GET",
+      "request_version" : "HTTP_VERSION_1_0",
+      "response_status_codes" : [ 200 ],
+      "resource_type" : "LBHttpMonitorProfile",
+      "id" : "tas-tcp-monitor",
+      "display_name" : "tas-tcp-monitor",
+      "monitor_port" : 80,
+      "interval" : 5,
+      "timeout" : 5,
+      "rise_count" : 3,
+      "fall_count" : 3
+    },
+    "resource_type" : "ChildLBMonitorProfile",
+    "id" : "tas-tcp-monitor"
+  },{
+    "LBMonitorProfile" : {
+      "resource_type" : "LBTcpMonitorProfile",
+      "id" : "tas-ssh-monitor",
+      "display_name" : "tas-ssh-monitor",
+      "monitor_port" : 2222,
+      "interval" : 5,
+      "timeout" : 5,
+      "rise_count" : 3,
+      "fall_count" : 3
+    },
+    "resource_type" : "ChildLBMonitorProfile",
+    "id" : "tas-ssh-monitor"
+  }]
+}
